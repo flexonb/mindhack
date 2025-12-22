@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Brain, Phone, AlertTriangle, MessageCircle, MapPin } from 'lucide-react';
+import Layout from '@/components/Layout';
+import { Phone, AlertTriangle, MessageCircle, MapPin } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Crisis Resources - MindHack',
@@ -9,24 +10,7 @@ export const metadata: Metadata = {
 
 export default function CrisisPage() {
   return (
-    <div className="min-h-screen bg-red-50">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-calm-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Brain className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-calm-900">MindHack</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/training" className="nav-link">Training</Link>
-              <Link href="/support" className="nav-link">Support</Link>
-              <Link href="/resources" className="nav-link">Resources</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <Layout activePage="crisis" showFooter={false}>
       {/* Emergency Banner */}
       <section className="bg-red-600 text-white py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -179,6 +163,6 @@ export default function CrisisPage() {
           You matter, and there are people who want to support you through this.
         </p>
       </section>
-    </div>
+    </Layout>
   );
 }

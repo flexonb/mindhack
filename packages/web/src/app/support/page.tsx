@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Brain, Heart, Shield, Phone, Users, Clock, Star } from 'lucide-react';
+import Layout from '@/components/Layout';
+import { Heart, Shield, Phone, Users, Clock, Star, AlertCircle } from 'lucide-react';
 
 interface Helper {
   id: string;
@@ -65,25 +66,7 @@ export default function SupportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-calm-50">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-calm-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Brain className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-calm-900">MindHack</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/training" className="nav-link">Training</Link>
-              <Link href="/support" className="nav-link nav-link-active">Support</Link>
-              <Link href="/resources" className="nav-link">Resources</Link>
-              <Link href="/demo" className="btn-primary">Try Demo</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <Layout activePage="support">
       {/* Crisis Banner */}
       <section className="bg-red-600 text-white py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -121,28 +104,28 @@ export default function SupportPage() {
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-6">
-            <div className="card text-center">
+            <div className="card text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
               <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="h-7 w-7 text-primary-600" />
               </div>
               <h3 className="font-semibold text-calm-900 mb-1">Listeners</h3>
               <p className="text-sm text-calm-600">Trained volunteers for active listening</p>
             </div>
-            <div className="card text-center">
+            <div className="card text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
               <div className="w-14 h-14 bg-wellness-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Heart className="h-7 w-7 text-wellness-green" />
               </div>
               <h3 className="font-semibold text-calm-900 mb-1">Peer Support</h3>
               <p className="text-sm text-calm-600">People with lived experience</p>
             </div>
-            <div className="card text-center">
+            <div className="card text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
               <div className="w-14 h-14 bg-wellness-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="h-7 w-7 text-wellness-purple" />
               </div>
               <h3 className="font-semibold text-calm-900 mb-1">Counselors</h3>
               <p className="text-sm text-calm-600">Licensed professionals</p>
             </div>
-            <div className="card text-center">
+            <div className="card text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
               <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Clock className="h-7 w-7 text-red-600" />
               </div>
@@ -174,7 +157,8 @@ export default function SupportPage() {
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700">
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 flex-shrink-0" />
               {error}
             </div>
           )}
@@ -183,21 +167,20 @@ export default function SupportPage() {
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
             </div>
-          ) : error ? (
+          ) : helpers.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-calm-500 mb-4">{error}</p>
+              <div className="w-16 h-16 bg-calm-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-calm-400" />
+              </div>
+              <p className="text-calm-500 mb-4">No helpers available at the moment.</p>
               <button onClick={() => window.location.reload()} className="btn-primary">
                 Retry
               </button>
             </div>
-          ) : helpers.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-calm-500">No helpers available at the moment.</p>
-            </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {helpers.map((helper) => (
-                <div key={helper.id} className="card">
+                <div key={helper.id} className="card hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                   <div className="flex items-start gap-4 mb-4">
                     <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 font-semibold text-lg">
                       {helper.user.avatarUrl ? (
@@ -279,6 +262,6 @@ export default function SupportPage() {
           </div>
         </div>
       </section>
-    </div>
+    </Layout>
   );
 }

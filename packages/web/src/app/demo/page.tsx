@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Brain, Send, Sparkles, AlertCircle, ChevronLeft, Bot } from 'lucide-react';
+import Layout from '@/components/Layout';
+import { Send, Sparkles, AlertCircle, ChevronLeft, Bot } from 'lucide-react';
 
 interface Persona {
   id: string;
@@ -137,49 +138,38 @@ export default function DemoPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-calm-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-      </div>
+      <Layout activePage="demo" showFooter={false}>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        </div>
+      </Layout>
     );
   }
 
   if (!persona) {
     return (
-      <div className="min-h-screen bg-calm-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-calm-500 mb-4">Persona not found</p>
-          <Link href="/training" className="btn-primary">Back to Training</Link>
+      <Layout activePage="demo" showFooter={false}>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-calm-500 mb-4">Persona not found</p>
+            <Link href="/training" className="btn-primary">Back to Training</Link>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-calm-50 flex flex-col">
-      <nav className="bg-white border-b border-calm-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Brain className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-calm-900">MindHack</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/training" className="nav-link">Training</Link>
-              <Link href="/support" className="nav-link">Support</Link>
-              <Link href="/resources" className="nav-link">Resources</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <Layout activePage="demo" showFooter={false}>
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
+        {/* Persona Header */}
         <div className="bg-white border-b border-calm-100 p-4">
           <div className="flex items-center gap-4">
             <Link href="/training" className="p-2 hover:bg-calm-100 rounded-lg transition-colors">
               <ChevronLeft className="h-5 w-5 text-calm-600" />
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-2xl relative">
+              <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center relative">
                 <Bot className="h-6 w-6 text-primary-600" />
                 <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
               </div>
@@ -195,6 +185,7 @@ export default function DemoPage() {
           </div>
         </div>
 
+        {/* Crisis Warning */}
         {personaId === 'crisis' && (
           <div className="mx-4 mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -205,12 +196,15 @@ export default function DemoPage() {
           </div>
         )}
 
+        {/* Error Message */}
         {error && (
-          <div className="mx-4 mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 text-sm">
+          <div className="mx-4 mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 text-sm flex items-center gap-2">
+            <AlertCircle className="h-4 w-4" />
             {error}
           </div>
         )}
 
+        {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.map((message, index) => (
             <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -235,6 +229,7 @@ export default function DemoPage() {
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Input Area */}
         <div className="bg-white border-t border-calm-100 p-4">
           {messages[messages.length - 1]?.suggestedResponses && messages[messages.length - 1].role === 'assistant' && (
             <>
@@ -271,6 +266,6 @@ export default function DemoPage() {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

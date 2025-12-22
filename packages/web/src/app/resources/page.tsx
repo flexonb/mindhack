@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Brain, BookOpen, Headphones, Video, FileText, Phone } from 'lucide-react';
+import Layout from '@/components/Layout';
+import { BookOpen, Headphones, Video, FileText, Phone, AlertCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Resources - MindHack',
@@ -11,28 +12,28 @@ const resources = [
   {
     category: 'Getting Started',
     items: [
-      { title: 'What is Mental Health?', type: 'Article', icon: '📖' },
-      { title: 'Understanding Depression', type: 'Article', icon: '📖' },
-      { title: 'Anxiety 101', type: 'Article', icon: '📖' },
-      { title: 'Recognizing Crisis Signs', type: 'Guide', icon: '📋' },
+      { title: 'What is Mental Health?', type: 'Article' },
+      { title: 'Understanding Depression', type: 'Article' },
+      { title: 'Anxiety 101', type: 'Article' },
+      { title: 'Recognizing Crisis Signs', type: 'Guide' },
     ],
   },
   {
     category: 'Self-Help Tools',
     items: [
-      { title: 'Guided Meditation', type: 'Audio', icon: '🎧' },
-      { title: 'Breathing Exercises', type: 'Video', icon: '🎬' },
-      { title: 'Journaling Prompts', type: 'Worksheet', icon: '📝' },
-      { title: 'Mood Tracker', type: 'Tool', icon: '📊' },
+      { title: 'Guided Meditation', type: 'Audio' },
+      { title: 'Breathing Exercises', type: 'Video' },
+      { title: 'Journaling Prompts', type: 'Worksheet' },
+      { title: 'Mood Tracker', type: 'Tool' },
     ],
   },
   {
     category: 'Crisis Resources',
     items: [
-      { title: '988 Suicide & Crisis Lifeline', type: 'Hotline', icon: '📞' },
-      { title: 'Crisis Text Line', type: 'Hotline', icon: '💬' },
-      { title: 'Emergency Numbers', type: 'Directory', icon: '📋' },
-      { title: 'Safety Planning Guide', type: 'Guide', icon: '📖' },
+      { title: '988 Suicide & Crisis Lifeline', type: 'Hotline' },
+      { title: 'Crisis Text Line', type: 'Hotline' },
+      { title: 'Emergency Numbers', type: 'Directory' },
+      { title: 'Safety Planning Guide', type: 'Guide' },
     ],
   },
 ];
@@ -64,27 +65,20 @@ const articles = [
   },
 ];
 
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Article: FileText,
+  Guide: BookOpen,
+  Audio: Headphones,
+  Video: Video,
+  Hotline: Phone,
+  Worksheet: FileText,
+  Tool: FileText,
+  Directory: FileText,
+};
+
 export default function ResourcesPage() {
   return (
-    <div className="min-h-screen bg-calm-50">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-calm-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Brain className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-calm-900">MindHack</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/training" className="nav-link">Training</Link>
-              <Link href="/support" className="nav-link">Support</Link>
-              <Link href="/resources" className="nav-link nav-link-active">Resources</Link>
-              <Link href="/demo" className="btn-primary">Try Demo</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <Layout activePage="resources">
       {/* Hero */}
       <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -103,26 +97,26 @@ export default function ResourcesPage() {
       <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href="#crisis" className="card text-center hover:border-red-200 border-transparent border-2">
+            <Link href="#crisis" className="card text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-red-200">
               <Phone className="h-8 w-8 text-red-600 mx-auto mb-2" />
               <h3 className="font-semibold text-calm-900">Crisis Help</h3>
               <p className="text-sm text-calm-500">24/7 hotlines</p>
-            </a>
-            <a href="#articles" className="card text-center hover:border-primary-200 border-transparent border-2">
+            </Link>
+            <Link href="#articles" className="card text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-primary-200">
               <BookOpen className="h-8 w-8 text-primary-600 mx-auto mb-2" />
               <h3 className="font-semibold text-calm-900">Articles</h3>
               <p className="text-sm text-calm-500">Mental health guides</p>
-            </a>
-            <a href="#tools" className="card text-center hover:border-wellness-green/20 border-transparent border-2">
+            </Link>
+            <div className="card text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-wellness-green/20">
               <Headphones className="h-8 w-8 text-wellness-green mx-auto mb-2" />
               <h3 className="font-semibold text-calm-900">Audio</h3>
               <p className="text-sm text-calm-500">Meditation & calm</p>
-            </a>
-            <a href="#videos" className="card text-center hover:border-wellness-purple/20 border-transparent border-2">
+            </div>
+            <div className="card text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-wellness-purple/20">
               <Video className="h-8 w-8 text-wellness-purple mx-auto mb-2" />
               <h3 className="font-semibold text-calm-900">Videos</h3>
               <p className="text-sm text-calm-500">Guided exercises</p>
-            </a>
+            </div>
           </div>
         </div>
       </section>
@@ -152,11 +146,11 @@ export default function ResourcesPage() {
                     <p className="text-red-100 text-sm mb-2">Text HOME to 741741</p>
                     <p className="text-xl font-bold">Available 24/7</p>
                   </div>
-                  <div className="bg-white/10 rounded-xl p-4">
+                  <Link href="/crisis" className="bg-white/10 rounded-xl p-4 hover:bg-white/20 transition-colors">
                     <h3 className="font-semibold mb-2">Emergency Services</h3>
                     <p className="text-red-100 text-sm mb-2">Immediate danger</p>
                     <p className="text-xl font-bold">Call 911</p>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -170,7 +164,7 @@ export default function ResourcesPage() {
           <h2 className="text-2xl font-bold text-calm-900 mb-8">Featured Articles</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {articles.map((article, index) => (
-              <article key={index} className="card hover:shadow-md transition-shadow cursor-pointer">
+              <article key={index} className="card hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="px-2 py-1 bg-primary-100 text-primary-700 rounded text-xs font-medium">
                     {article.category}
@@ -198,21 +192,26 @@ export default function ResourcesPage() {
               <div key={index}>
                 <h3 className="text-lg font-semibold text-calm-900 mb-4">{category.category}</h3>
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {category.items.map((item, itemIndex) => (
-                    <div key={itemIndex} className="card hover:shadow-md transition-shadow cursor-pointer flex items-center gap-3">
-                      <span className="text-2xl">{item.icon}</span>
-                      <div>
-                        <h4 className="font-medium text-calm-900 text-sm">{item.title}</h4>
-                        <p className="text-xs text-calm-500">{item.type}</p>
+                  {category.items.map((item, itemIndex) => {
+                    const Icon = iconMap[item.type] || FileText;
+                    return (
+                      <div key={itemIndex} className="card hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer flex items-center gap-3">
+                        <div className="w-10 h-10 bg-calm-100 rounded-lg flex items-center justify-center">
+                          <Icon className="h-5 w-5 text-calm-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-calm-900 text-sm">{item.title}</h4>
+                          <p className="text-xs text-calm-500">{item.type}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
-    </div>
+    </Layout>
   );
 }

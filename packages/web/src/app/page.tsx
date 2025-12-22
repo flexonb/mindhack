@@ -1,29 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Brain, Heart, Shield, Users, ChevronRight, Sparkles, MessageCircle } from 'lucide-react';
+import Layout from '@/components/Layout';
+import { Brain, Heart, Shield, Users, ChevronRight, Sparkles, MessageCircle, Frown, Wind, AlertTriangle } from 'lucide-react';
 
 export default function HomePage() {
   return (
-    <div className="flex-1">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-calm-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <Brain className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-calm-900">MindHack</span>
-            </div>
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="#features" className="nav-link">Features</Link>
-              <Link href="/training" className="nav-link">Training</Link>
-              <Link href="/support" className="nav-link">Support</Link>
-              <Link href="/resources" className="nav-link">Resources</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <Layout activePage="home">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-50 via-white to-calm-50 py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -206,17 +189,21 @@ export default function HomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { name: 'Depression', icon: '😔', color: 'bg-blue-100 text-blue-700' },
-              { name: 'Anxiety', icon: '😰', color: 'bg-yellow-100 text-yellow-700' },
-              { name: 'PTSD', icon: '😨', color: 'bg-purple-100 text-purple-700' },
-              { name: 'Crisis', icon: '🆘', color: 'bg-gray-100 text-gray-700' },
+              { name: 'Depression', icon: Frown, color: 'bg-blue-100 text-blue-700' },
+              { name: 'Anxiety', icon: Wind, color: 'bg-yellow-100 text-yellow-700' },
+              { name: 'PTSD', icon: AlertTriangle, color: 'bg-purple-100 text-purple-700' },
+              { name: 'Crisis', icon: AlertTriangle, color: 'bg-red-100 text-red-700' },
             ].map((persona) => (
-              <div key={persona.name} className="card text-center hover:scale-105 transition-transform cursor-pointer">
-                <div className={`w-16 h-16 ${persona.color} rounded-full flex items-center justify-center text-3xl mx-auto mb-3`}>
-                  {persona.icon}
+              <Link
+                key={persona.name}
+                href="/training"
+                className="card text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+              >
+                <div className={`w-16 h-16 ${persona.color} rounded-full flex items-center justify-center mx-auto mb-3`}>
+                  <persona.icon className="h-8 w-8" />
                 </div>
                 <h4 className="font-semibold text-calm-900">{persona.name}</h4>
-              </div>
+              </Link>
             ))}
           </div>
           <div className="text-center mt-8">
@@ -247,50 +234,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-calm-900 text-calm-300 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Brain className="h-6 w-6 text-primary-400" />
-                <span className="text-lg font-bold text-white">MindHack</span>
-              </div>
-              <p className="text-sm">
-                Making mental health support accessible to everyone through
-                AI-powered training and human connection.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-white mb-4">Product</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/training" className="hover:text-white transition-colors">AI Training</Link></li>
-                <li><Link href="/support" className="hover:text-white transition-colors">Human Support</Link></li>
-                <li><Link href="/resources" className="hover:text-white transition-colors">Resources</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-white mb-4">Resources</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/crisis" className="hover:text-white transition-colors">Crisis Resources</Link></li>
-                <li><Link href="/demo" className="hover:text-white transition-colors">Demo</Link></li>
-                <li><Link href="/support" className="hover:text-white transition-colors">Find Help</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-calm-700 mt-8 pt-8 text-center text-sm">
-            <p>© 2024 MindHack. All rights reserved. If you're in crisis, call 988 (US) or your local crisis line.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </Layout>
   );
 }

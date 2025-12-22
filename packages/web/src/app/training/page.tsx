@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Brain, ChevronRight, Shield, AlertCircle, MessageCircle } from 'lucide-react';
+import Layout from '@/components/Layout';
+import { Brain, ChevronRight, Shield, AlertCircle, MessageCircle, Frown, Wind, AlertTriangle } from 'lucide-react';
 
 interface Persona {
   id: string;
@@ -48,26 +49,18 @@ const defaultPersonas: Persona[] = [
   },
 ];
 
-const emojiMap: Record<string, string> = {
-  depression: '😔',
-  anxiety: '😰',
-  ptsd: '😨',
-  crisis: '🆘',
-  bipolar: '🎭',
-  ocd: '🔄',
-  addiction: '💊',
-  'eating-disorder': '🍽️',
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  depression: Frown,
+  anxiety: Wind,
+  ptsd: AlertTriangle,
+  crisis: AlertTriangle,
 };
 
 const colorMap: Record<string, string> = {
   depression: 'bg-blue-100 text-blue-700',
   anxiety: 'bg-yellow-100 text-yellow-700',
   ptsd: 'bg-purple-100 text-purple-700',
-  crisis: 'bg-gray-100 text-gray-700',
-  bipolar: 'bg-pink-100 text-pink-700',
-  ocd: 'bg-orange-100 text-orange-700',
-  addiction: 'bg-red-100 text-red-700',
-  'eating-disorder': 'bg-green-100 text-green-700',
+  crisis: 'bg-red-100 text-red-700',
 };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
@@ -100,24 +93,7 @@ export default function TrainingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-calm-50">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-calm-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Brain className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-calm-900">MindHack</span>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/training" className="nav-link nav-link-active">Training</Link>
-              <Link href="/support" className="nav-link">Support</Link>
-              <Link href="/resources" className="nav-link">Resources</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <Layout activePage="training">
       {/* Header */}
       <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -149,41 +125,46 @@ export default function TrainingPage() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {personas.map((persona) => (
-                <Link
-                  href={`/demo?persona=${persona.id}`}
-                  key={persona.id}
-                  className="card hover:shadow-lg transition-all duration-300 group"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`w-16 h-16 ${colorMap[persona.id] || 'bg-calm-100 text-calm-700'} rounded-xl flex items-center justify-center text-3xl`}>
-                      {emojiMap[persona.id] || '👤'}
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      persona.difficulty === 'Critical' ? 'bg-red-100 text-red-700' :
-                      persona.difficulty === 'Severe' ? 'bg-orange-100 text-orange-700' :
-                      persona.difficulty === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-green-100 text-green-700'
-                    }`}>
-                      {persona.difficulty}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-bold text-calm-900 mb-1">{persona.name}</h3>
-                  <p className="text-sm text-calm-500 mb-3">{persona.condition}</p>
-                  <p className="text-calm-600 text-sm mb-4">{persona.description}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {persona.traits.map((trait) => (
-                      <span key={trait} className="px-2 py-1 bg-calm-100 text-calm-600 rounded text-xs">
-                        {trait}
+              {personas.map((persona) => {
+                const Icon = iconMap[persona.id] || Brain;
+                const colorClass = colorMap[persona.id] || 'bg-calm-100 text-calm-700';
+
+                return (
+                  <Link
+                    href={`/demo?persona=${persona.id}`}
+                    key={persona.id}
+                    className="card hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`w-16 h-16 ${colorClass} rounded-xl flex items-center justify-center`}>
+                        <Icon className="h-8 w-8" />
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        persona.difficulty === 'Critical' ? 'bg-red-100 text-red-700' :
+                        persona.difficulty === 'Severe' ? 'bg-orange-100 text-orange-700' :
+                        persona.difficulty === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-green-100 text-green-700'
+                      }`}>
+                        {persona.difficulty}
                       </span>
-                    ))}
-                  </div>
-                  <div className="flex items-center text-primary-600 font-medium text-sm group-hover:text-primary-700">
-                    Start Practice
-                    <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </Link>
-              ))}
+                    </div>
+                    <h3 className="text-xl font-bold text-calm-900 mb-1">{persona.name}</h3>
+                    <p className="text-sm text-calm-500 mb-3">{persona.condition}</p>
+                    <p className="text-calm-600 text-sm mb-4">{persona.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {persona.traits.map((trait) => (
+                        <span key={trait} className="px-2 py-1 bg-calm-100 text-calm-600 rounded text-xs">
+                          {trait}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center text-primary-600 font-medium text-sm group-hover:text-primary-700">
+                      Start Practice
+                      <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>
@@ -226,6 +207,6 @@ export default function TrainingPage() {
           </div>
         </div>
       </section>
-    </div>
+    </Layout>
   );
 }
