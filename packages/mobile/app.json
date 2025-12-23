@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "MindHack",
+    "slug": "mindhack",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0ea5e9"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mindhack.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "MindHack needs camera access for video calls with helpers.",
+        "NSMicrophoneUsageDescription": "MindHack needs microphone access for voice calls.",
+        "NSPhotoLibraryUsageDescription": "MindHack needs photo access to share images."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0ea5e9"
+      },
+      "package": "com.mindhack.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow MindHack to access your camera for video calls."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    }
+  }
+}

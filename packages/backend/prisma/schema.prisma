@@ -1,0 +1,368 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Management
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String?
+  name          String
+  avatarUrl     String?
+  role          UserRole  @default(USER)
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile           UserProfile?
+  trainingSessions  TrainingSession[]
+  supportSessions   SupportSession[]       @relation("UserSessions")
+  helper        Helper?
+  progress          UserProgress?
+  crisisAlerts      CrisisAlert[]
+  badges            UserBadge[]
+  certificates      Certificate[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  HELPER
+  COUNSELOR
+  ADMIN
+}
+
+model UserProfile {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio                   String?
+  preferredLanguage     String   @default("en")
+  timezone              String   @default("UTC")
+  notificationEmail     Boolean  @default(true)
+  notificationPush      Boolean  @default(true)
+  notificationSms       Boolean  @default(false)
+  crisisAlertsEnabled   Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("user_profiles")
+}
+
+// AI Personas
+model Persona {
+  id                String           @id @default(uuid())
+  name              String
+  condition         PersonaCondition
+  difficulty        DifficultyLevel
+  description       String
+  systemPrompt      String
+  traits            String[]
+  triggerTopics     String[]
+  crisisKeywords    String[]
+  openingMessages   String[]
+  escalationMessages String[]
+  isActive          Boolean          @default(true)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  trainingSessions TrainingSession[]
+
+  @@unique([condition, difficulty])
+  @@map("personas")
+}
+
+enum PersonaCondition {
+  DEPRESSION
+  ANXIETY
+  PTSD
+  BIPOLAR
+  OCD
+  ADDICTION
+  EATING_DISORDER
+  CRISIS
+}
+
+enum DifficultyLevel {
+  MILD
+  MODERATE
+  SEVERE
+}
+
+// Training Sessions
+model TrainingSession {
+  id              String        @id @default(uuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personaId       String
+  persona         Persona       @relation(fields: [personaId], references: [id])
+  status          SessionStatus @default(ACTIVE)
+  crisisDetected  Boolean       @default(false)
+  startedAt       DateTime      @default(now())
+  completedAt     DateTime?
+
+  messages TrainingMessage[]
+  scores   SessionScore?
+
+  @@map("training_sessions")
+}
+
+model TrainingMessage {
+  id         String   @id @default(uuid())
+  sessionId  String
+  session    TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role       MessageRole
+  content    String
+  suggestedResponses Json? // JSON array of suggested responses
+  createdAt  DateTime @default(now())
+
+  @@map("training_messages")
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+model SessionScore {
+  id                 String         @id @default(uuid())
+  sessionId          String         @unique
+  session            TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  crisisRecognition  Float
+  empathy            Float
+  appropriateness    Float
+  deescalation       Float
+  overall            Float
+  createdAt          DateTime       @default(now())
+
+  @@map("session_scores")
+}
+
+enum SessionStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  ESCALATED
+}
+
+// Support System
+model Helper {
+  id            String       @id @default(uuid())
+  userId        String       @unique
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  role          HelperRole
+  specialties   String[]
+  bio           String
+  rating        Float        @default(0)
+  totalSessions Int          @default(0)
+  isVerified    Boolean      @default(false)
+  isAvailable   Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  credentials   HelperCredential[]
+  availability  HelperAvailability[]
+  sessions      SupportSession[]
+
+  @@map("helpers")
+}
+
+enum HelperRole {
+  LISTENER
+  PEER_SUPPORT
+  COUNSELOR
+  CRISIS_RESPONDER
+  SPECIALIST
+}
+
+model HelperCredential {
+  id          String   @id @default(uuid())
+  helperId    String
+  helper      Helper   @relation(fields: [helperId], references: [id], onDelete: Cascade)
+  type        String
+  issuer      String
+  documentUrl String
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@map("helper_credentials")
+}
+
+model HelperAvailability {
+  id         String   @id @default(uuid())
+  helperId   String
+  helper     Helper   @relation(fields: [helperId], references: [id], onDelete: Cascade)
+  dayOfWeek  Int      // 0-6 (Sunday-Saturday)
+  startTime  String   // HH:mm format
+  endTime    String   // HH:mm format
+  timezone   String   @default("UTC")
+
+  @@unique([helperId, dayOfWeek, startTime])
+  @@map("helper_availability")
+}
+
+model SupportSession {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation("UserSessions", fields: [userId], references: [id], onDelete: Cascade)
+  helperId      String
+  helper        Helper        @relation( fields: [helperId], references: [id])
+  type          SessionType
+  status        SessionStatus @default(PENDING)
+  rating        Int?
+  feedback      String?
+  startedAt     DateTime      @default(now())
+  endedAt       DateTime?
+
+  messages SupportMessage[]
+
+  @@map("support_sessions")
+}
+
+enum SessionType {
+  TEXT
+  VOICE
+  VIDEO
+}
+
+model SupportMessage {
+  id        String   @id @default(uuid())
+  sessionId String
+  session   SupportSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  senderId  String
+  content   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("support_messages")
+}
+
+// User Progress
+model UserProgress {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  totalSessions Int     @default(0)
+  averageScore Float    @default(0)
+  streakDays   Int      @default(0)
+  lastActiveAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  skillLevels UserSkillLevel[]
+
+  @@map("user_progress")
+}
+
+model UserSkillLevel {
+  id          String    @id @default(uuid())
+  progressId  String
+  progress    UserProgress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  skill       String
+  level       SkillLevel @default(BEGINNER)
+  score       Float     @default(0)
+  sessions    Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([progressId, skill])
+  @@map("user_skill_levels")
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+model UserBadge {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+  earnedAt  DateTime @default(now())
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+model Badge {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String
+  iconUrl     String
+  criteria    Json        // JSON object with earning criteria
+  createdAt   DateTime    @default(now())
+
+  users       UserBadge[]
+
+  @@map("badges")
+}
+
+model Certificate {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  personaId   String
+  score       Float
+  issuedAt    DateTime @default(now())
+
+  @@map("certificates")
+}
+
+// Crisis Detection
+model CrisisAlert {
+  id                String        @id @default(uuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId         String?
+  severity          CrisisSeverity
+  detectedKeywords  String[]
+  triggeredAt       DateTime      @default(now())
+  escalatedAt       DateTime?
+  resolvedAt        DateTime?
+  outcome           String?
+
+  @@map("crisis_alerts")
+}
+
+enum CrisisSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// Admin & Audit
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  oldData   Json?
+  newData   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@map("audit_logs")
+}
