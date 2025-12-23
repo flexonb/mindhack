@@ -1,61 +1,92 @@
 # MindHack - Mental Health Training & Support Platform
 
-A comprehensive mental health application with AI-powered training simulations and real human support.
+A web application for mental health training and AI-powered emotional support. Practice helping skills through realistic simulations or chat with supportive AI companions anytime.
 
 ## Features
 
-### AI Training Mode
-- Practice conversations with 8 different AI personas (Depression, Anxiety, PTSD, Bipolar, OCD, Addiction, Eating Disorders, Crisis)
-- Real-time scoring for crisis recognition, empathy, appropriateness, and de-escalation
-- Skill progression tracking with badges and certificates
-- Personalized learning paths
+### Training Mode
+Practice empathetic conversations with AI personas representing various mental health scenarios:
+- **Realistic AI Personas**: Depression, Anxiety, Burnout, Grief, Self-Esteem, Relationships, Crisis
+- **Skill Progression**: 10 levels from "Beginner Helper" to "Master Supporter"
+- **Empathy Scoring**: AI evaluates your responses and provides feedback
+- **XP & Badges**: Earn experience points and unlock achievements
+- **Progress Tracking**: Track sessions, streaks, and growth over time
 
-### Human Support Mode
-- Connect with trained listeners, peer supporters, and licensed counselors
-- Real-time chat and video calls
-- AI-powered helper matching
-- 24/7 crisis responders available
+### Support Mode
+24/7 AI companions for emotional support:
+- **Emma** - Empathetic Listener (depression, loneliness)
+- **Marcus** - Anxiety Specialist (worry, overthinking, panic)
+- **Jordan** - Burnout Coach (stress, exhaustion, work-life balance)
+- **Sofia** - Grief Companion (loss, bereavement)
+- **Alex** - Relationship Guide (relationships, communication)
+- **Casey** - Self-Esteem Coach (confidence, self-worth)
+
+### Crisis Resources
+- Global crisis hotline directory (100+ countries)
+- Immediate emergency numbers
+- Safety planning tools
+- Professional resource links
+
+### Additional Features
+- **Dark Mode**: Full dark theme support
+- **Panic Mode**: Quick-hide feature for privacy
+- **Responsive Design**: Works on mobile and desktop
+- **Markdown Support**: Rich text in messages
+- **Local Progress Storage**: Your data stays on your device
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| **Web** | Next.js 14 + TypeScript + Tailwind CSS |
-| **Mobile** | React Native + Expo + TypeScript |
-| **Backend** | Node.js + Express + TypeScript |
-| **Database** | PostgreSQL + Prisma ORM + Redis |
-| **Real-time** | Socket.io + WebRTC |
-| **AI** | Minimax API (LLM for personas) |
-| **Auth** | JWT + bcrypt |
-| **Infrastructure** | AWS + Docker + GitHub Actions |
+| **Frontend** | Next.js 14, React, TypeScript, Tailwind CSS |
+| **Backend** | Express.js, TypeScript |
+| **AI** | Minimax API (LLM for responses and scoring) |
+| **Styling** | Tailwind CSS, Lucide Icons |
 
 ## Project Structure
 
 ```
 mindhack/
 ├── packages/
-│   ├── web/          # Next.js web application
-│   ├── mobile/       # React Native mobile app
-│   ├── backend/      # Express.js API server
-│   └── shared/       # Shared TypeScript types
-├── .github/
-│   └── workflows/    # CI/CD pipelines
+│   ├── web/                    # Next.js frontend
+│   │   └── src/
+│   │       ├── app/            # App pages (App Router)
+│   │       │   ├── training/   # Training mode
+│   │       │   ├── support/    # Support mode
+│   │       │   ├── crisis/     # Crisis resources
+│   │       │   ├── resources/  # Mental health articles
+│   │       │   ├── how-it-works/
+│   │       │   ├── privacy-policy/
+│   │       │   ├── terms-of-service/
+│   │       │   └── disclaimer/
+│   │       ├── components/     # Reusable UI components
+│   │       ├── context/        # React contexts (theme)
+│   │       └── hooks/          # Custom React hooks
+│   │
+│   ├── backend/                # Express API server
+│   │   └── src/
+│   │       ├── routes/         # API endpoints
+│   │       ├── services/       # Business logic
+│   │       └── middleware/     # Express middleware
+│   │
+│   ├── mobile/                 # React Native (planned)
+│   └── shared/                 # Shared TypeScript types
+│
+├── .env.example                # Environment variables template
 └── README.md
 ```
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 20+
-- PostgreSQL 14+
-- Redis 7+
+- Node.js 18+
 - npm or yarn
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-org/mindhack.git
+git clone https://github.com/flexonb/mindhack.git
 cd mindhack
 ```
 
@@ -67,107 +98,88 @@ npm install
 3. Set up environment variables:
 ```bash
 cp packages/backend/.env.example packages/backend/.env
-# Edit .env with your configuration
+# Edit .env with your API keys
 ```
 
-4. Set up the database:
+4. Start development servers:
+
+**Backend (Terminal 1):**
 ```bash
 cd packages/backend
-npx prisma generate
-npx prisma db push
+npm run dev
 ```
 
-5. Start the development servers:
+**Web (Terminal 2):**
 ```bash
-# Terminal 1 - Backend
-cd packages/backend && npm run dev
-
-# Terminal 2 - Web
-cd packages/web && npm run dev
-
-# Terminal 3 - Mobile
-cd packages/mobile && npm run dev
+cd packages/web
+npm run dev
 ```
+
+5. Open http://localhost:3000 in your browser
 
 ### Environment Variables
 
 | Variable | Description |
 |----------|-------------|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `JWT_SECRET` | Secret key for JWT tokens |
+| `PORT` | Backend server port (default: 4000) |
 | `MINIMAX_API_KEY` | API key for Minimax LLM |
-| `AWS_ACCESS_KEY_ID` | AWS credentials for S3, etc. |
+| `MINIMAX_BASE_URL` | Minimax API endpoint |
 
-## API Documentation
+## API Endpoints
 
-The API documentation is available at `http://localhost:4000/api` when running locally.
+### AI Chat
+- `POST /api/ai/chat` - Send message to companion/persona
+- `GET /api/ai/support/companions` - Get available companions
+- `GET /api/ai/training/personas` - Get training personas
 
-### Main Endpoints
+## How It Works
 
-#### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login
-- `GET /api/auth/me` - Get current user
+### Training Mode Flow
+1. Choose a persona (e.g., someone experiencing anxiety)
+2. Practice empathetic responses in chat
+3. AI evaluates your responses with a score
+4. Earn XP and track your progress
 
-#### Training
-- `GET /api/training/personas` - List all personas
-- `POST /api/training/sessions` - Start training session
-- `POST /api/training/sessions/:id/messages` - Send message
-- `POST /api/training/sessions/:id/end` - End session and get scores
+### Support Mode Flow
+1. Select a companion that matches your needs
+2. Start chatting about what's on your mind
+3. Receive empathetic, supportive responses
+4. Access crisis resources if needed
 
-#### Support
-- `POST /api/support/request` - Request support session
-- `GET /api/support/sessions` - List user's sessions
-- `POST /api/support/sessions/:id/messages` - Send support message
+## Pages
 
-## AI Personas
+| Route | Description |
+|-------|-------------|
+| `/` | Home page with feature overview |
+| `/training` | Training mode with personas |
+| `/training/chat` | Chat interface for training |
+| `/support` | Support companions selection |
+| `/support/chat` | Chat with AI companion |
+| `/crisis` | Global crisis hotlines |
+| `/resources` | Mental health articles |
+| `/how-it-works` | Step-by-step guide |
+| `/privacy-policy` | Privacy policy |
+| `/terms-of-service` | Terms of service |
+| `/disclaimer` | Medical disclaimer |
 
-| Condition | Difficulty Levels | Description |
-|-----------|------------------|-------------|
-| Depression | Mild, Moderate, Severe | Expressions of hopelessness, sadness, loss of interest |
-| Anxiety | Mild, Moderate, Severe | Excessive worry, panic symptoms, restlessness |
-| PTSD | Mild, Moderate, Severe | Flashbacks, avoidance behaviors, hypervigilance |
-| Bipolar | Mild, Moderate, Severe | Mood swings between mania and depression |
-| OCD | Mild, Moderate, Severe | Compulsive behaviors, intrusive thoughts |
-| Addiction | Mild, Moderate, Severe | Substance abuse patterns, denial behaviors |
-| Eating Disorders | Mild, Moderate, Severe | Body image issues, restrictive/binge behaviors |
-| Crisis | Critical | Suicidal ideation with safety protocols |
+## Security
 
-## Scoring System
+- **API Keys**: Stored in `.env` (never committed)
+- **Local Storage**: Progress stored locally on your device
+- **No Sensitive Data**: No personal data collected or transmitted
+- **HTTPS**: Use HTTPS in production
 
-The training sessions are scored on 4 dimensions:
+## Disclaimer
 
-1. **Crisis Recognition** (30%) - Ability to identify warning signs
-2. **Empathy** (30%) - Quality of compassionate responses
-3. **Appropriateness** (25%) - Suitability of interventions
-4. **De-escalation** (15%) - Effectiveness in calming distressed personas
-
-Skill levels: Beginner → Intermediate → Advanced → Expert
-
-## Security & Compliance
-
-- HIPAA compliant data handling
-- End-to-end encryption for chats
-- GDPR compliance for EU users
-- Crisis detection with automatic escalation
-- Regular security audits
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+MindHack is an educational tool and NOT a substitute for professional mental health care. If you're experiencing a mental health crisis:
+- Call 988 (US) or your local emergency number
+- Go to your nearest emergency room
+- Contact a crisis hotline
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-If you're in crisis, please call 988 (US) or your local crisis line immediately.
+MIT License - See LICENSE file for details.
 
 ---
 
-Built with ❤️ for mental health awareness and support
+Built with care for mental health awareness and support 💙
